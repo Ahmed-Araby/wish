@@ -8,7 +8,7 @@ of my study for this [OS](https://pages.cs.wisc.edu/~remzi/Classes/537/Spring201
 
 ### what "wish" can do ?
 
-## what "wish" can do ?
+## what "wish" should do ?
 - [ ] interactive mode.
 - [ ] batch mode.
 - [ ] support search path.
