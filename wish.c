@@ -1,5 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+// definitions
+#define LINE_FEED 10
+#define MAX_PARALLEL_PROGRAMS 10
+#define PARALLEL_EXECUTION_OPERATOR "&"
+#define REDIRECTION_OPERATOR ">"
+#define SPACE " "
+//
 
 void interactive();
 void batch();
@@ -16,7 +25,7 @@ struct program{
     char* name;
     uint argc;
     char** argv;
-    
+
     /**
      * @brief 
      * if null output should be written into the standard output stream.
@@ -55,8 +64,46 @@ void interactive(){
             continue;
         }       
         printf("command = %s , size = %d \n", buffer, csize);
-        // parse the command
-        //
+        printf("line feed = %d \n", LINE_FEED);
+        /**
+         * @brief parsing
+         * 1- search for the special operators supported by the shell.
+         *      1- parallel execution operator [first] "&".
+         *      2- redirection operation [second] ">".
+         * 2- search for the program name and arguments.
+         */
+
+        struct program programs[MAX_PARALLEL_PROGRAMS];
+        uint programscnt = 0;
+        char *bufferc = buffer;
+
+        // 1- look for parallel execution operator.
+        while(bufferc != NULL){
+            char *scommand = strsep(&bufferc, PARALLEL_EXECUTION_OPERATOR);
+            printf("token = %s, length = %d \n", scommand, strlen(scommand));
+            printf("remaining of the command = %s \n", bufferc);
+
+            // 2- look for the redirection operator
+            // after this step scommand will contain the file of the redirectio operator.
+            char *sprogram = strsep(&scommand, REDIRECTION_OPERATOR);
+            if(sprogram == NULL){
+                printf("error: a program must be specifed \n");
+                exit(1);
+            }
+
+            // construct the program
+            struct program p;
+            if(scommand != NULL){
+                char *outstream = scommand; // just for convience
+                p.outstream = malloc( (strlen(outstream) + 1) * sizeof(char));
+                if(p.outstream == NULL){
+                    printf("error: failed to allocate memory for the outstream string name \n");
+                    exit(1);
+                }
+                strcpy(p.outstream, outstream);
+                printf("outstream = %s, length = %d \n", p.outstream, strlen(p.outstream));
+            }
+        }
     }
     free(buffer);
 }
