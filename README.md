@@ -6,4 +6,16 @@ of my study for this [OS](https://pages.cs.wisc.edu/~remzi/Classes/537/Spring201
 
 ## design of "wish"
 
-## what "wish" can do
+### what "wish" can do ?
+
+## what "wish" can do ?
+- [ ] interactive mode.
+- [ ] batch mode.
+- [ ] support search path.
+- [ ] enable the user to concatenate more search directories into the current search path.
+- [ ] support built in commands.
+- [ ] support redirection for other programs.
+- [ ] support redirection for build in commands.
+- [ ] support multiple level of redirections [if this is possible].
+- [ ] running parallel commands.
+- [ ] handling parsing errors and other errors that the shell should be responsible for.
