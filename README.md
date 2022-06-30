@@ -6,7 +6,7 @@ of my study for this [OS](https://pages.cs.wisc.edu/~remzi/Classes/537/Spring201
 
 ## design of "wish"
 
-### what "wish" can do ?
+## what "wish" can do ?
 
 ## what "wish" should do ?
 - [ ] interactive mode.
