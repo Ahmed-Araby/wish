@@ -3,6 +3,7 @@
 #include <string.h>
 #include "utils.h"
 
+uint isdebugmode = 0;
 
 void interactive();
 void batch();
@@ -30,7 +31,8 @@ struct program{
 };
 
 void deallocateprogram(struct program *p){
-    printf("free memory for %s program \n", p->name);
+    if(isdebugmode)
+        printf("free memory for %s program \n", p->name);
     if(p->outstream != NULL)
         free(p->outstream);
     if(p->name != NULL)
@@ -73,7 +75,8 @@ void interactive(){
         }     
         buffer[csize-1] = '\0'; // remove line feed (10)
         trim(buffer);  
-        printf("command = %s , size = %d \n", buffer, csize);
+        if(isdebugmode)
+            printf("command = %s , size = %d \n", buffer, csize);
         /**
          * @brief Parser
          * 1- search for the special operators supported by the shell.
@@ -91,10 +94,10 @@ void interactive(){
             char *scommand = strsep(&bufferc, PARALLEL_EXECUTION_OPERATOR);
             trim(scommand);
             trim(bufferc);
-
-            printf("single command = %s, length = %d \n", scommand, strlen(scommand));
-            printf("remaining of the parallel execution commands = %s \n", bufferc);
-
+            if(isdebugmode){
+                printf("single command = %s, length = %d \n", scommand, strlen(scommand));
+                printf("remaining of the parallel execution commands = %s \n", bufferc);
+            }
             // 2- look for the redirection operator
             // after this step scommand will contain the file of the redirectio operator.
             char *sprogram = strsep(&scommand, REDIRECTION_OPERATOR);
@@ -118,16 +121,19 @@ void interactive(){
                     exit(1);
                 }
                 strcpy(p.outstream, outstream);
-                printf("outstream = %s, length = %d \n", p.outstream, strlen(p.outstream));
+                if(isdebugmode)
+                    printf("outstream = %s, length = %d \n", p.outstream, strlen(p.outstream));
             }
             // 3- extract program name and program arguments
             // 3.1- extract program name
-            printf("program command = %s, length = %d \n", sprogram, strlen(sprogram));
+            if(isdebugmode)
+                printf("program command = %s, length = %d \n", sprogram, strlen(sprogram));
             char *pName = strsep(&sprogram, SPACE);
             trim(pName);
             p.name = malloc( (strlen(pName) + 1) * sizeof(char) );
             strcpy(p.name, pName);
-            printf("program name = %s, lenght = %d \n", p.name, strlen(p.name));
+            if(isdebugmode)
+                printf("program name = %s, lenght = %d \n", p.name, strlen(p.name));
             // 3.2- extract program arguments
             p.argv = malloc(MAX_ARGS_PER_PROGRAM * sizeof(char*));
             p.argc = 0 ;
@@ -144,34 +150,38 @@ void interactive(){
                 strcpy(p.argv[p.argc], arg);
                 p.argc +=1;
             }
-
-            printf("p.argc = %d \n", p.argc);
-            for(int i=0; i<p.argc; i++){
-                printf("p.argv[i] = %s \n", p.argv[i]);
+            if(isdebugmode){
+                printf("p.argc = %d \n", p.argc);
+                for(int i=0; i<p.argc; i++){
+                    printf("p.argv[i] = %s \n", p.argv[i]);
+                }
             }
             programs[programscnt] = p;
             programscnt +=1;
         }   
 
-        /**
-         * @brief Execution stage
-         */
-        printf("execution, programscnt = %d \n", programscnt);
-        for(int i=0; i<programscnt; i++){
-            printf("program #%d \n", i);
-            printf("p.name = %s \n", programs[i].name);
-            if(programs[i].outstream != NULL){
-                printf("p.outstream = %s \n", programs[i].outstream);
-            }
+        if(isdebugmode){
+            for(int i=0; i<programscnt; i++){
+                printf("program #%d \n", i);
+                printf("p.name = %s \n", programs[i].name);
+                if(programs[i].outstream != NULL){
+                    printf("p.outstream = %s \n", programs[i].outstream);
+                }
 
-            if(programs[i].argv != NULL){
-                printf("has arguments \n");
-                printf("p.argc = %d \n", programs[i].argc);
-                for(int j=0; j<programs[i].argc; j++){
-                    printf("arg #%d = %s\n", j, programs[i].argv[j]);
+                if(programs[i].argv != NULL){
+                    printf("has arguments \n");
+                    printf("p.argc = %d \n", programs[i].argc);
+                    for(int j=0; j<programs[i].argc; j++){
+                        printf("arg #%d = %s\n", j, programs[i].argv[j]);
+                    }
                 }
             }
         }
+        
+        /**
+         * @brief Execution
+         */
+        
 
         // free programs
         for(int i=0; i<programscnt; i++){
