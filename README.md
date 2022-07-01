@@ -43,7 +43,7 @@ it works in major steps
 * parse for the special operators supported by the shell ex "& is the parallel execution operator"  and "> output redirection operator"
   * it starts by spliting the command into sub commands around the '&' operator
   * then start looking for the ">" operator if exist within each sub command
-* built program (abstraction mentioned above) from the individual sub commands
+* build a program (abstraction mentioned above) from the individual sub commands
   * extract the program name
   * extract the arguments
   
