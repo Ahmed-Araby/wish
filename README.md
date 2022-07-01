@@ -64,3 +64,4 @@ will carry on the logic to exceute built in functions and 3rd party binaries.
 - [ ] support multiple level of redirections [if this is possible].
 - [ ] running parallel commands.
 - [ ] handling parsing errors and other errors that the shell should be responsible for.
+- [ ] provide debug mode for detailed logs.
