@@ -6,7 +6,7 @@ of my study for this [OS](https://pages.cs.wisc.edu/~remzi/Classes/537/Spring201
 
 ## design of "wish"
 
-### program abstraction "struct program"
+## program abstraction "struct program"
 the whole thing is built around this
 ```
 struct program{
@@ -17,30 +17,33 @@ struct program{
     /**
      * @brief 
      * if null output should be written into the standard output stream.
-     * other wise the string will be considered as the file name to, 
-     * redirect the output to.
+     * other wise the string will be considered as the file name to which the program
+     * output should be redirected.
      */
     char* outstream; 
 };
 ```
 struct program is an abstraction of what the user of the shell want to do
-it could be the built in function of the shell or a 3rd party binaries.
-for example
-if the user typed 
+it could be a built-in function of the shell or a 3rd party binaries.
+for example, if the user typed 
+```
 ls -l -a > out.txt
+```
 this will be converted into a program struct with 
+
+```
 name = ls
 argc = 2
 argv = {-l, -a}
 outstream = out.txt
-
+```
 ## parser
 parse one command line at a time, it builds a list of programs (the abstraction mentioned above) each program will run in a seprate process in parallel to the others, 
-it work in major steps
+it works in major steps
 * parse for the special operators supported by the shell ex "& is the parallel execution operator"  and "> output redirection operator"
   * it starts by spliting the command into sub commands around the '&' operator
-  * then start looking for the ">" operator if exist in each sub command
-* built program (abstraction mentioned above) from the individual commands
+  * then start looking for the ">" operator if exist within each sub command
+* built program (abstraction mentioned above) from the individual sub commands
   * extract the program name
   * extract the arguments
   
