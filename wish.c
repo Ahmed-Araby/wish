@@ -53,6 +53,8 @@ void interactive(){
     while(1){
         printf("wish> ");
         int csize = getline(&buffer, &bsize, stdin);
+        buffer[csize-1] = '\0'; // remove line feed (10)
+        trim(buffer);
         if(csize == -1){
             printf("error: failed to read command line \n"); 
             continue;
