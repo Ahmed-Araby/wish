@@ -30,7 +30,7 @@ struct program{
 };
 
 void deallocateprogram(struct program *p){
-    printf("free memory for %s program \n", p);
+    printf("free memory for %s program \n", p->name);
     if(p->outstream != NULL)
         free(p->outstream);
     if(p->name != NULL)
@@ -107,6 +107,8 @@ void interactive(){
 
             // construct the program
             struct program p;
+            p.name = p.outstream = p.argv = NULL;
+            p.argc = 0;
             if(scommand != NULL){
                 char *outstream = scommand; // just for convience
                 trim(outstream);
@@ -155,7 +157,22 @@ void interactive(){
          * @brief Execution stage
          */
         printf("execution, programscnt = %d \n", programscnt);
-        
+        for(int i=0; i<programscnt; i++){
+            printf("program #%d \n", i);
+            printf("p.name = %s \n", programs[i].name);
+            if(programs[i].outstream != NULL){
+                printf("p.outstream = %s \n", programs[i].outstream);
+            }
+
+            if(programs[i].argv != NULL){
+                printf("has arguments \n");
+                printf("p.argc = %d \n", programs[i].argc);
+                for(int j=0; j<programs[i].argc; j++){
+                    printf("arg #%d = %s\n", j, programs[i].argv[j]);
+                }
+            }
+        }
+
         // free programs
         for(int i=0; i<programscnt; i++){
             deallocateprogram(&programs[i]);
