@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include "utils.h"
 /**
  * @brief 
  * this method assume str has null byte terminator at the end.
@@ -48,6 +48,22 @@ uint trim(char *str){
     }
     return strlen(str);
 }
+
+void deallocateprogram(struct program *p){
+    if(isdebugmode)
+        printf("free memory for %s program \n", p->name);
+    if(p->outstream != NULL)
+        free(p->outstream);
+    if(p->name != NULL)
+        free(p->name);    
+    if(p->argv != NULL){
+        for(int i=0; i<p->argc; i++){
+            free(p->argv[i]);
+        }
+    }
+    p->argc = 0;
+}
+
 
 void test1();
 void test2();

@@ -2,60 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "utils.h"
+#include "built-in-funs.h"
 
-uint isdebugmode = 0;
-
-void interactive();
-void batch();
-
-/**
- * @brief 
- * program is an abstraction of the compution that the user need to do,
- * it could refer to 3rd party binary that is expected to be located
- * in the search path of the shell, 
- * or a built in function supported by the shell.
- */
-
-struct program{
-    char* name;
-    uint argc;
-    char** argv;
-
-    /**
-     * @brief 
-     * if null output should be written into the standard output stream.
-     * other wise the string will be considered as the file name to, 
-     * redirect the output to.
-     */
-    char* outstream; 
-};
-
-void deallocateprogram(struct program *p){
-    if(isdebugmode)
-        printf("free memory for %s program \n", p->name);
-    if(p->outstream != NULL)
-        free(p->outstream);
-    if(p->name != NULL)
-        free(p->name);    
-    if(p->argv != NULL){
-        for(int i=0; i<p->argc; i++){
-            free(p->argv[i]);
-        }
-    }
-    p->argc = 0;
-}
-
-int main(int argc, char *argv[]){
-    if(argc > 2){
-        printf("error: wish can only run in interactive mode with no arguments or batch mode with file name as the only argument \n");
-        exit(1);
-    }
-    if(argc == 1)
-        interactive();
-    else
-        batch();
-    return 0;
-}
+char* builtinf[] = {"cd", "path", "exit"};
+void (*builtinfptr []) (struct program*) = {&cd, &path, &myexit};
 
 void interactive(){
     char *buffer;
@@ -110,7 +60,9 @@ void interactive(){
 
             // construct the program
             struct program p;
-            p.name = p.outstream = p.argv = NULL;
+            p.name = NULL;
+            p.outstream = NULL;
+            p.argv = NULL;
             p.argc = 0;
             if(scommand != NULL){
                 char *outstream = scommand; // just for convience
@@ -181,7 +133,7 @@ void interactive(){
         /**
          * @brief Execution
          */
-        
+        builtinfptr[0](&programs[0]);
 
         // free programs
         for(int i=0; i<programscnt; i++){
@@ -192,6 +144,19 @@ void interactive(){
     free(buffer);
 }
 
+
 void batch(){
     printf("batch mode is not implemented yet \n");
+}
+
+int main(int argc, char *argv[]){
+    if(argc > 2){
+        printf("error: wish can only run in interactive mode with no arguments or batch mode with file name as the only argument \n");
+        exit(1);
+    }
+    if(argc == 1)
+        interactive();
+    else
+        batch();
+    return 0;
 }
