@@ -67,13 +67,12 @@ void interactive(){
     while(1){
         printf("wish> ");
         int csize = getline(&buffer, &bsize, stdin);
-        // [TODO] move the following 2 lines after the check
-        buffer[csize-1] = '\0'; // remove line feed (10)
-        trim(buffer);
         if(csize == -1){
             printf("error: failed to read command line \n"); 
             continue;
-        }       
+        }     
+        buffer[csize-1] = '\0'; // remove line feed (10)
+        trim(buffer);  
         printf("command = %s , size = %d \n", buffer, csize);
         /**
          * @brief Parser
