@@ -6,7 +6,7 @@ of my study for this [OS](https://pages.cs.wisc.edu/~remzi/Classes/537/Spring201
 
 ## design of "wish"
 
-## program abstraction "struct program"
+### program abstraction "struct program"
 the whole thing is built around this
 ```
 struct program{
@@ -37,7 +37,7 @@ argc = 2
 argv = {-l, -a}
 outstream = out.txt
 ```
-## parser
+### parser
 parse one command line at a time, it builds a list of programs (the abstraction mentioned above) each program will run in a seprate process in parallel to the others, 
 it works in major steps
 * parse for the special operators supported by the shell ex "& is the parallel execution operator"  and "> output redirection operator"
