@@ -1,14 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "utils.h"
 
-// definitions
-#define LINE_FEED 10
-#define MAX_PARALLEL_PROGRAMS 10
-#define PARALLEL_EXECUTION_OPERATOR "&"
-#define REDIRECTION_OPERATOR ">"
-#define SPACE " "
-//
 
 void interactive();
 void batch();
@@ -80,12 +74,17 @@ void interactive(){
         // 1- look for parallel execution operator.
         while(bufferc != NULL){
             char *scommand = strsep(&bufferc, PARALLEL_EXECUTION_OPERATOR);
+            trim(scommand);
+            trim(bufferc);
+
             printf("token = %s, length = %d \n", scommand, strlen(scommand));
             printf("remaining of the command = %s \n", bufferc);
 
             // 2- look for the redirection operator
             // after this step scommand will contain the file of the redirectio operator.
             char *sprogram = strsep(&scommand, REDIRECTION_OPERATOR);
+            trim(sprogram);
+            trim(scommand);
             if(sprogram == NULL){
                 printf("error: a program must be specifed \n");
                 exit(1);
@@ -103,6 +102,8 @@ void interactive(){
                 strcpy(p.outstream, outstream);
                 printf("outstream = %s, length = %d \n", p.outstream, strlen(p.outstream));
             }
+            // 3- search for the program name
+            printf("program name = %s, length = %d \n", sprogram, strlen(sprogram));
         }
     }
     free(buffer);
