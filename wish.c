@@ -29,6 +29,20 @@ struct program{
     char* outstream; 
 };
 
+void deallocateprogram(struct program *p){
+    printf("free memory for %s program \n", p);
+    if(p->outstream != NULL)
+        free(p->outstream);
+    if(p->name != NULL)
+        free(p->name);    
+    if(p->argv != NULL){
+        for(int i=0; i<p->argc; i++){
+            free(p->argv[i]);
+        }
+    }
+    p->argc = 0;
+}
+
 int main(int argc, char *argv[]){
     if(argc > 2){
         printf("error: wish can only run in interactive mode with no arguments or batch mode with file name as the only argument \n");
@@ -53,6 +67,7 @@ void interactive(){
     while(1){
         printf("wish> ");
         int csize = getline(&buffer, &bsize, stdin);
+        // [TODO] move the following 2 lines after the check
         buffer[csize-1] = '\0'; // remove line feed (10)
         trim(buffer);
         if(csize == -1){
@@ -61,7 +76,7 @@ void interactive(){
         }       
         printf("command = %s , size = %d \n", buffer, csize);
         /**
-         * @brief parsing
+         * @brief Parser
          * 1- search for the special operators supported by the shell.
          *      1- parallel execution operator [first] "&".
          *      2- redirection operation [second] ">".
@@ -70,7 +85,7 @@ void interactive(){
 
         struct program programs[MAX_PARALLEL_PROGRAMS];
         uint programscnt = 0;
-        char *bufferc = buffer;
+        char *bufferc = buffer; // preserve the buffer pointer for future getline() invokes and to free the buffer at the end
 
         // 1- look for parallel execution operator.
         while(bufferc != NULL){
@@ -133,14 +148,22 @@ void interactive(){
             for(int i=0; i<p.argc; i++){
                 printf("p.argv[i] = %s \n", p.argv[i]);
             }
+            programs[programscnt] = p;
+            programscnt +=1;
         }   
 
-
-
-        // [TODO] free the list of programs you built
+        /**
+         * @brief Execution stage
+         */
+        printf("execution, programscnt = %d \n", programscnt);
+        
+        // free programs
+        for(int i=0; i<programscnt; i++){
+            deallocateprogram(&programs[i]);
+        }
     }
+
     free(buffer);
-    // free 
 }
 
 void batch(){
