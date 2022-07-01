@@ -102,11 +102,22 @@ void interactive(){
                 strcpy(p.outstream, outstream);
                 printf("outstream = %s, length = %d \n", p.outstream, strlen(p.outstream));
             }
-            // 3- search for the program name
-            printf("program name = %s, length = %d \n", sprogram, strlen(sprogram));
-        }
+            // 3- extract program name and program arguments
+            // 3.1- extract program name
+            printf("program command = %s, length = %d \n", sprogram, strlen(sprogram));
+            char *pName = strsep(&sprogram, SPACE);
+            trim(pName);
+            trim(sprogram);
+            p.name = malloc( (strlen(pName) + 1) * sizeof(char) );
+            strcpy(p.name, pName);
+            printf("program name = %s, lenght = %d \n", p.name, strlen(p.name));
+            // 3.2- extract program arguments
+
+        }   
+        // [TODO] free the list of programs you built
     }
     free(buffer);
+    // free 
 }
 
 void batch(){
