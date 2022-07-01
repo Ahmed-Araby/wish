@@ -107,12 +107,30 @@ void interactive(){
             printf("program command = %s, length = %d \n", sprogram, strlen(sprogram));
             char *pName = strsep(&sprogram, SPACE);
             trim(pName);
-            trim(sprogram);
             p.name = malloc( (strlen(pName) + 1) * sizeof(char) );
             strcpy(p.name, pName);
             printf("program name = %s, lenght = %d \n", p.name, strlen(p.name));
             // 3.2- extract program arguments
+            p.argv = malloc(MAX_ARGS_PER_PROGRAM * sizeof(char*));
+            p.argc = 0 ;
+            for(int i=0; i< MAX_ARGS_PER_PROGRAM; i++){
+                p.argv[i] = NULL;
+            }
 
+            char *pargs = sprogram; // for convience
+            trim(pargs);
+            while(pargs != NULL){
+                char *arg = strsep(&pargs, SPACE);
+                trim(arg);
+                p.argv[p.argc] = malloc(( strlen(arg) + 1) * sizeof(char));
+                strcpy(p.argv[p.argc], arg);
+                p.argc +=1;
+            }
+
+            printf("p.argc = %d \n", p.argc);
+            for(int i=0; i<p.argc; i++){
+                printf("p.argv[i] = %s \n", p.argv[i]);
+            }
         }   
         // [TODO] free the list of programs you built
     }

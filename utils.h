@@ -8,7 +8,7 @@
 #define PARALLEL_EXECUTION_OPERATOR "&"
 #define REDIRECTION_OPERATOR ">"
 #define SPACE " "
-
+#define MAX_ARGS_PER_PROGRAM 10 
 uint trim(char*);
 
 #endif 
