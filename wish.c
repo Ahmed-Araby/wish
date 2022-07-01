@@ -58,7 +58,6 @@ void interactive(){
             continue;
         }       
         printf("command = %s , size = %d \n", buffer, csize);
-        printf("line feed = %d \n", LINE_FEED);
         /**
          * @brief parsing
          * 1- search for the special operators supported by the shell.
@@ -77,8 +76,8 @@ void interactive(){
             trim(scommand);
             trim(bufferc);
 
-            printf("token = %s, length = %d \n", scommand, strlen(scommand));
-            printf("remaining of the command = %s \n", bufferc);
+            printf("single command = %s, length = %d \n", scommand, strlen(scommand));
+            printf("remaining of the parallel execution commands = %s \n", bufferc);
 
             // 2- look for the redirection operator
             // after this step scommand will contain the file of the redirectio operator.
@@ -94,6 +93,7 @@ void interactive(){
             struct program p;
             if(scommand != NULL){
                 char *outstream = scommand; // just for convience
+                trim(outstream);
                 p.outstream = malloc( (strlen(outstream) + 1) * sizeof(char));
                 if(p.outstream == NULL){
                     printf("error: failed to allocate memory for the outstream string name \n");
@@ -118,8 +118,8 @@ void interactive(){
             }
 
             char *pargs = sprogram; // for convience
-            trim(pargs);
             while(pargs != NULL){
+                trim(pargs);
                 char *arg = strsep(&pargs, SPACE);
                 trim(arg);
                 p.argv[p.argc] = malloc(( strlen(arg) + 1) * sizeof(char));
@@ -132,6 +132,9 @@ void interactive(){
                 printf("p.argv[i] = %s \n", p.argv[i]);
             }
         }   
+
+
+
         // [TODO] free the list of programs you built
     }
     free(buffer);
