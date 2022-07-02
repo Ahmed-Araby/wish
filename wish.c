@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include "utils.h"
 #include "built-in-funs.h"
 
-char* builtinf[] = {"cd", "path", "exit"};
-void (*builtinfptr []) (struct program*) = {&cd, &path, &myexit};
+char* builtinfnames[] = {"cd", "path", "exit"};
+void (*builtinfptrs []) (struct program*) = {&cd, &path, &myexit};
 
 int parse(char* buffer, struct program** programs, int maxparalleprograms)
 {
@@ -94,6 +97,53 @@ int parse(char* buffer, struct program** programs, int maxparalleprograms)
 
     return programscnt;
 }
+
+void* getBuiltInFuncPtr(char* pname){
+    for(int i=0; i < BUILT_IN_FUNCTIONS_CNT; i++) {
+        if(strcmp(pname, builtinfnames[i]) == 0)
+            return builtinfptrs[i];
+    }
+    return NULL;
+}
+
+void execute(struct program** programs, int programscnt)
+{
+    // [TODO] should I make the execution order of the parallel progrms be deterministic (in the order of writing)
+    uint* childpids = malloc(programscnt * sizeof(uint));
+    for(int i=0; i<programscnt; i++){
+        int rc = fork();
+        if(rc < 0){
+            printf("error: failed to make process for %s program  \n", programs[i]->name);
+            exit(1);
+        }
+        else if(rc == 0){
+            void (*builtinfunc)(struct program*) = getBuiltInFuncPtr(programs[i]->name);
+            if(builtinfunc != NULL){
+                builtinfunc(programs[i]);
+            }
+            else{
+                printf("warnning: executing 3rd party binaries are not supported yet \n");
+            }
+            exit(0); // end the child proceess here, if returned it will go to the while loof of the shell and hence the child process will never end
+        }
+        else{
+            // main shell process (parent process)
+            childpids[i] = rc; // store the child process id for waitpid
+        }
+    }
+
+    // wait for the computation to end before giving the user the prompt back
+    printf("before waiting \n");
+    for(int i=0; i<programscnt; i++){
+        // [TODO] read more about the waitpid and wait familly sys calls as I am not sure that I am using it right.
+        int rc = waitpid(childpids[i], NULL, 0);
+        if(rc == -1){
+            printf("error: failed to wait for %s program \n", programs[i]->name);
+        }
+    }
+    printf("after waiting \n");
+}
+
 void interactive(){
     char *buffer;
     uint bsize = 1000; // max command of 1k-1 char 
@@ -116,6 +166,7 @@ void interactive(){
         if(isdebugmode)
             printf("command = %s , size = %d \n", buffer, csize);
 
+        // parser
         int programscnt = parse(buffer, programs, MAX_PARALLEL_PROGRAMS);
         if(isdebugmode){
             for(int i=0; i<programscnt; i++){
@@ -134,11 +185,9 @@ void interactive(){
                 }
             }
         }
-            
-        /**
-         * @brief Execution
-         */
-        builtinfptr[0](programs[0]);
+
+        // executer
+        execute(programs, programscnt);
 
         // free programs
         for(int i=0; i<programscnt; i++){

@@ -9,7 +9,8 @@
 #define REDIRECTION_OPERATOR ">"
 #define SPACE " "
 #define MAX_ARGS_PER_PROGRAM 10 
-#define isdebugmode 1
+#define BUILT_IN_FUNCTIONS_CNT 3
+#define isdebugmode 0
 
 /**
  * @brief 
