@@ -213,6 +213,10 @@ void init(){
     spathmaxl = 1000;
     spath = malloc(spathmaxl * sizeof(char*));
     
+    /**
+     * strings within the double quotes are not located in the heap, 
+     * but after the strcpy we get copy of them into the heap
+     */
     spathc = 0;
     spath[spathc] = malloc((strlen("/usr/bin") + 1 ) * sizeof(char));
     strcpy(spath[spathc], "/usr/bin");
