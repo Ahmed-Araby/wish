@@ -66,5 +66,5 @@ void path(struct program* p){
     }
 }
 void clear(struct program* p){
-    system("clear");
+    printf("\e[1;1H\e[2J");
 }
