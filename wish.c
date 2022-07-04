@@ -6,9 +6,13 @@
 #include <sys/wait.h>
 #include "utils.h"
 #include "built-in-funs.h"
+#include "shared.h"
 
 char* builtinfnames[] = {"cd", "path", "exit"};
 void (*builtinfptrs []) (struct program*) = {&cd, &path, &myexit};
+
+extern char* cwd;
+extern int cwdl;
 
 int parse(char* buffer, struct program** programs, int maxparalleprograms)
 {
@@ -110,6 +114,7 @@ void execute(struct program** programs, int programscnt)
 {
     // [TODO] should I make the execution order of the parallel progrms be deterministic (in the order of writing)
     uint* childpids = malloc(programscnt * sizeof(uint));
+    int forkscnt = 0;
     for(int i=0; i<programscnt; i++){
         void (*builtinfunc) (struct program *) = getBuiltInFuncPtr(programs[i]->name);
         if(builtinfunc != NULL){
@@ -121,15 +126,13 @@ void execute(struct program** programs, int programscnt)
     }
 
     // wait for the computation to end before giving the user the prompt back
-    printf("before waiting \n");
-    for(int i=0; i<programscnt; i++){
+    for(int i=0; i<forkscnt; i++){
         // [TODO] read more about the waitpid and wait familly sys calls as I am not sure that I am using it right.
         int rc = waitpid(childpids[i], NULL, 0);
         if(rc == -1){
             printf("error: failed to wait for %s program \n", programs[i]->name);
         }
     }
-    printf("after waiting \n");
 }
 
 void interactive(){
@@ -143,7 +146,7 @@ void interactive(){
     struct program** programs = malloc(MAX_PARALLEL_PROGRAMS * sizeof(struct program*));
 
     while(1){
-        printf("wish> ");
+        printf("%s$ ", cwd);
         int csize = getline(&buffer, &bsize, stdin);
         if(csize == -1){
             printf("error: failed to read command line \n"); 
@@ -194,11 +197,19 @@ void batch(){
     printf("batch mode is not implemented yet \n");
 }
 
+
+void init(){
+    cwdl = 1000;
+    cwd = malloc((cwdl + 1) * sizeof(char));
+    getcwd(cwd, cwdl);
+}
+
 int main(int argc, char *argv[]){
     if(argc > 2){
         printf("error: wish can only run in interactive mode with no arguments or batch mode with file name as the only argument \n");
         exit(1);
     }
+    init();
     if(argc == 1)
         interactive();
     else
