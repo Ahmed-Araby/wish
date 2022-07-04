@@ -13,6 +13,9 @@ void (*builtinfptrs []) (struct program*) = {&cd, &path, &myexit};
 
 extern char* cwd;
 extern int cwdl;
+extern char** spath;
+extern int spathmaxl;
+extern int spathc;
 
 int parse(char* buffer, struct program** programs, int maxparalleprograms)
 {
@@ -201,9 +204,20 @@ void batch(){
 
 
 void init(){
+    // cwd
     cwdl = 1000;
     cwd = malloc((cwdl + 1) * sizeof(char));
     getcwd(cwd, cwdl);
+    
+    // search path
+    spathmaxl = 1000;
+    spath = malloc(spathmaxl * sizeof(char*));
+    spathc = 0;
+}
+
+void destroy(){
+    // we need to free the cwd and search path memory 
+    // (however this will be on exit, so OS will do it for us)
 }
 
 int main(int argc, char *argv[]){

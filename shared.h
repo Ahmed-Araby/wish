@@ -3,5 +3,7 @@
 
 char* cwd;
 int cwdl;
-
+char** spath;
+int spathmaxl;
+int spathc;
 #endif
