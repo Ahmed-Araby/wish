@@ -2,7 +2,7 @@
 #include "utils.h"
 
 void myexit(struct program* p){
-    printf("built-in exit function not implemented yet \n");
+    exit(0);
 }
 void cd(struct program* p){
     printf("built-in cd function not implemented yet \n");
