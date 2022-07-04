@@ -212,7 +212,20 @@ void init(){
     // search path
     spathmaxl = 1000;
     spath = malloc(spathmaxl * sizeof(char*));
+    
     spathc = 0;
+    spath[spathc] = malloc((strlen("/usr/bin") + 1 ) * sizeof(char));
+    strcpy(spath[spathc], "/usr/bin");
+
+    spathc++;
+    spath[spathc] = malloc((strlen("/bin") + 1 ) * sizeof(char));
+    strcpy(spath[spathc], "/bin");
+    
+    spathc++;
+    spath[spathc] = malloc((strlen("/usr") + 1 ) * sizeof(char));
+    strcpy(spath[spathc], "/usr");
+
+    spathc++;
 }
 
 void destroy(){
