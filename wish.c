@@ -8,8 +8,8 @@
 #include "built-in-funs.h"
 #include "shared.h"
 
-char* builtinfnames[] = {"cd", "path", "exit"};
-void (*builtinfptrs []) (struct program*) = {&cd, &path, &myexit};
+char* builtinfnames[] = {"cd", "path", "exit", "clear", "cls"};
+void (*builtinfptrs []) (struct program*) = {&cd, &path, &myexit, &clear, &clear};
 
 extern char* cwd;
 extern int cwdl;

@@ -65,3 +65,6 @@ void path(struct program* p){
         spathc++;
     }
 }
+void clear(struct program* p){
+    system("clear");
+}

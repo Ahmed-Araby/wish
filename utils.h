@@ -11,7 +11,7 @@
 #define COLON ":"
 #define COMMA ","
 #define MAX_ARGS_PER_PROGRAM 10 
-#define BUILT_IN_FUNCTIONS_CNT 3
+#define BUILT_IN_FUNCTIONS_CNT 5
 #define isdebugmode 0
 
 /**
