@@ -121,7 +121,7 @@ void execute(struct program** programs, int programscnt)
             builtinfunc(programs[i]);
         }
         else{
-            printf("error: can not execute 3rd pary binaries yet");
+            printf("error: can not execute 3rd pary binaries yet \n");
         }
     }
 
@@ -146,7 +146,9 @@ void interactive(){
     struct program** programs = malloc(MAX_PARALLEL_PROGRAMS * sizeof(struct program*));
 
     while(1){
+        printf("\033[0;32m"); // green
         printf("%s$ ", cwd);
+        printf("\033[0m"); // default
         int csize = getline(&buffer, &bsize, stdin);
         if(csize == -1){
             printf("error: failed to read command line \n"); 
