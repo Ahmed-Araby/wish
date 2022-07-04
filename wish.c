@@ -111,24 +111,12 @@ void execute(struct program** programs, int programscnt)
     // [TODO] should I make the execution order of the parallel progrms be deterministic (in the order of writing)
     uint* childpids = malloc(programscnt * sizeof(uint));
     for(int i=0; i<programscnt; i++){
-        int rc = fork();
-        if(rc < 0){
-            printf("error: failed to make process for %s program  \n", programs[i]->name);
-            exit(1);
-        }
-        else if(rc == 0){
-            void (*builtinfunc)(struct program*) = getBuiltInFuncPtr(programs[i]->name);
-            if(builtinfunc != NULL){
-                builtinfunc(programs[i]);
-            }
-            else{
-                printf("warnning: executing 3rd party binaries are not supported yet \n");
-            }
-            exit(0); // end the child proceess here, if returned it will go to the while loof of the shell and hence the child process will never end
+        void (*builtinfunc) (struct program *) = getBuiltInFuncPtr(programs[i]->name);
+        if(builtinfunc != NULL){
+            builtinfunc(programs[i]);
         }
         else{
-            // main shell process (parent process)
-            childpids[i] = rc; // store the child process id for waitpid
+            printf("error: can not execute 3rd pary binaries yet");
         }
     }
 
