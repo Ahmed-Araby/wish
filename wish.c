@@ -146,7 +146,7 @@ void interactive(){
     struct program** programs = malloc(MAX_PARALLEL_PROGRAMS * sizeof(struct program*));
 
     while(1){
-        printf("\033[0;32m"); // green
+        printf("\033[1;32m"); // green
         printf("%s$ ", cwd);
         printf("\033[0m"); // default
         int csize = getline(&buffer, &bsize, stdin);
