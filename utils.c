@@ -1,7 +1,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "utils.h"
+#include "shared.h"
+
+extern char **spath;
+extern int spathmaxl;
+extern int spathc;
+
 /**
  * @brief 
  * this method assume str has null byte terminator at the end.
@@ -87,6 +94,35 @@ enum ptype ppathtype(char* pname){
     else if(pname[0] !='.' && pname[0]!='/')
         return CLUELESS;
     return INVALID;
+}
+
+/**
+ * @brief look into the search path for executable program
+ * with the name pname, and make pabspath point at the absolute
+ * path of this program,   note: this method will return the
+ * result of the first match and it will search the search path
+ * in the order defined by the user and init() method
+ * 
+ * @param pabspath p to p to return the abs path to the client code in it
+ * @param pname 
+ */
+void getpabspath(char **pabspath, char* pname)
+{
+    int pnamelen = strlen(pname);
+    for(int i=0; i < spathc; i++){
+        int tmpdirlen = strlen(spath[i]) + pnamelen + 2; // 2 for '/' and terminating null byte
+        char *tmpdir = malloc(tmpdirlen * sizeof(char));
+        tmpdir[0] = '\0'; // terminating null byte
+        strcat(tmpdir, spath[i]);
+        strcat(tmpdir, "/");
+        strcat(tmpdir, pname);
+        if(access(tmpdir, R_OK | X_OK) == 0){
+            *pabspath = tmpdir;
+            return;
+        }
+    }
+    *pabspath = NULL;
+    return ;
 }
 
 

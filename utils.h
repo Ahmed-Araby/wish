@@ -45,5 +45,6 @@ enum ptype{
 uint trim(char*);
 void deallocateprogram(struct program*);
 enum ptype ppathtype(char*);
+void getpabspath(char **, char*);
 
 #endif 
