@@ -46,5 +46,5 @@ uint trim(char*);
 void deallocateprogram(struct program*);
 enum ptype ppathtype(char*);
 void getpabspath(char **, char*);
-
+int getpname(char **, char *);
 #endif 

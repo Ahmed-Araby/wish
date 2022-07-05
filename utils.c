@@ -125,6 +125,35 @@ void getpabspath(char **pabspath, char* pname)
     return ;
 }
 
+/**
+ * @brief should make *pname point at the first char 
+ * of the program name. ex if ppath = /usr/bin/ls.
+ * then *pname should point at the char 'l' of "ls".
+ * 
+ * @param pname used to return pointer to the first char of the program name 
+ * @param ppath 
+ * @return int 0 -> success, -1 -> failure
+ */
+int getpname(char** pname, char* ppath)
+{
+    if(ppath == NULL || pname == NULL)
+        return -1;
+    *pname = NULL;
+
+    int eindex = strlen(ppath) -1;
+    int pnamesindex = -1;
+    while(eindex >= 0){
+        if(ppath[eindex] == '/')
+            break;
+        pnamesindex = eindex;
+        eindex --;
+    }
+    if(pnamesindex == -1)
+        return -1;
+    *pname = ppath + pnamesindex;
+    return 0;
+}
+
 
 void test1();
 void test2();

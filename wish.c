@@ -156,14 +156,29 @@ int e3rdPB(struct program* program){
     }
     else if(rc == 0){
         // child process
-        printf("execute program %s \n", ppath);
-        // if(program->outstream != NULL){
-        //     close(STDOUT_FILENO);
-        //     open(program->outstream, O_CREAT | O_TRUNC, O_WRONLY);
-        // }
-        // execv(ppath, program->argv);
-        // printf("error: failed to execv '%s' program \n", program->name);
-        exit(0);
+        if(program->outstream != NULL){
+            close(STDOUT_FILENO);
+            open(program->outstream, O_CREAT | O_TRUNC, O_WRONLY);
+        }
+        
+        /**
+         * @brief refactor this part
+         * to hold the program name into argv of the struct program, 
+         * also think about doing all the path type and absolute path stuff in the parser.
+         */
+        char *pname = NULL;
+        getpname(&pname, ppath);
+        if(pname == NULL){
+            printf("error: failed to get program name out of %s \n", ppath);
+            exit(1);
+        }
+        char **argv = malloc((program->argc + 1) * sizeof(char*));
+        argv[0] = pname;
+        for(int i=0; i<program->argc; i++)
+            argv[i+1] = program->argv[i];
+        execv(ppath, argv);
+        printf("error: failed to execv '%s' program \n", program->name);
+        exit(1);
     }
     else {
         // parent process (wish)
