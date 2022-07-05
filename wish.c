@@ -158,7 +158,7 @@ int e3rdPB(struct program* program){
         // child process
         if(program->outstream != NULL){
             close(STDOUT_FILENO);
-            open(program->outstream, O_CREAT | O_TRUNC, O_WRONLY);
+            open(program->outstream, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU); // the mode flag give the current user rw and execute permission
         }
         
         /**
