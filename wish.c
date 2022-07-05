@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 #include "utils.h"
 #include "built-in-funs.h"
 #include "shared.h"
@@ -123,6 +124,31 @@ void* getBuiltInFuncPtr(char* pname){
  */
 int e3rdPB(struct program* program){
     // [todo] we need to make sure this binary exist before forking
+    enum ptype pt = ppathtype(program->name);
+    if(pt == INVALID){
+        printf("error: invlaid 3rd party binary path \n");
+        return -1;
+    }
+    char *ppath = program->name;
+
+    if(
+        (pt == ABSOLUTE  || pt == RELATIVE) &&
+        access(program->name, R_OK | X_OK) == -1
+    ){
+        printf("error: can not execute '%s' program \n", program->name);
+        return -1;
+    }
+    else if(pt == CLUELESS){
+        ppath = NULL;
+        getpabspath(&ppath, program->name);
+        if(ppath == NULL){
+            printf("error: can not execute '%s' program \n", program->name);
+            return -1;
+        }
+        if(isdebugmode)
+            printf("3rd party binary executable path = %s \n", ppath);
+    }
+
     int rc = fork();
     if(rc  == -1){
         printf("error: failed to excute '%s' program \n", program->name);
@@ -130,14 +156,17 @@ int e3rdPB(struct program* program){
     }
     else if(rc == 0){
         // child process
-        // do output redirection if needed
-        // exec to bring in the 3rd party binary stuff
-        enum ptype pt = ppathtype(program->name);
-        printf("I am child process, I will fire '%s' program, pptype = %d \n", program->name, pt);
+        printf("execute program %s \n", ppath);
+        // if(program->outstream != NULL){
+        //     close(STDOUT_FILENO);
+        //     open(program->outstream, O_CREAT | O_TRUNC, O_WRONLY);
+        // }
+        // execv(ppath, program->argv);
+        // printf("error: failed to execv '%s' program \n", program->name);
         exit(0);
     }
     else {
-        // parent process (shell)
+        // parent process (wish)
         return rc;
     }
 }
