@@ -113,24 +113,59 @@ void* getBuiltInFuncPtr(char* pname){
     return NULL;
 }
 
+
+/**
+ * @brief 'e3rdPB' stands for execute 3rd party binary, 
+ * should carry on the logic needed to execute 3rd party binary
+ * 
+ * @param program
+ * @return int, child pid
+ */
+int e3rdPB(struct program* program){
+    // [todo] we need to make sure this binary exist before forking
+    int rc = fork();
+    if(rc  == -1){
+        printf("error: failed to excute '%s' program \n", program->name);
+        return -1;
+    }
+    else if(rc == 0){
+        // child process
+        // do output redirection if needed
+        // exec to bring in the 3rd party binary stuff
+        enum ptype pt = ppathtype(program->name);
+        printf("I am child process, I will fire '%s' program, pptype = %d \n", program->name, pt);
+        exit(0);
+    }
+    else {
+        // parent process (shell)
+        return rc;
+    }
+}
+
 void execute(struct program** programs, int programscnt)
 {
-    // [TODO] should I make the execution order of the parallel progrms be deterministic (in the order of writing)
     uint* childpids = malloc(programscnt * sizeof(uint));
     int forkscnt = 0;
-    for(int i=0; i<programscnt; i++){
+    
+    for(int i=0; i<programscnt; i++)
+    {
         void (*builtinfunc) (struct program *) = getBuiltInFuncPtr(programs[i]->name);
         if(builtinfunc != NULL){
+            // built in function in the shell
             builtinfunc(programs[i]);
         }
         else{
-            printf("error: can not execute 3rd pary binaries yet \n");
+            // 3rd party bianry
+            int cpid = e3rdPB(programs[i]);
+            if(cpid > 0){
+                childpids[forkscnt] = cpid;
+                forkscnt++;
+            }
         }
     }
 
-    // wait for the computation to end before giving the user the prompt back
+    // wait
     for(int i=0; i<forkscnt; i++){
-        // [TODO] read more about the waitpid and wait familly sys calls as I am not sure that I am using it right.
         int rc = waitpid(childpids[i], NULL, 0);
         if(rc == -1){
             printf("error: failed to wait for %s program \n", programs[i]->name);

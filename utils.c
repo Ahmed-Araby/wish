@@ -64,6 +64,31 @@ void deallocateprogram(struct program *p){
     p->argc = 0;
 }
 
+/**
+ * @brief determine the type of the path for the 3rd party binary. 
+ * @param pname 
+ * @return enum ptype 
+ */
+enum ptype ppathtype(char* pname){
+    if(pname == NULL)
+        return INVALID;
+    int len = strlen(pname);
+    if(len == 0)
+        return INVALID;
+    
+    if(
+        len > 2 &&
+        pname[0] == '.' && 
+        pname[1] == '/'
+    )
+        return RELATIVE;
+    else if(len > 1 && pname[0] == '/')
+        return ABSOLUTE;
+    else if(pname[0] !='.' && pname[0]!='/')
+        return CLUELESS;
+    return INVALID;
+}
+
 
 void test1();
 void test2();

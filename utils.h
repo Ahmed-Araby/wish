@@ -35,7 +35,15 @@ struct program{
     char* outstream; 
 };
 
+enum ptype{
+    ABSOLUTE,  //0, ex /usr/bin/ls
+    RELATIVE, //1,  ./wish
+    CLUELESS,  //2, ls (just the bianry, and we should search in the search path)
+    INVALID //3, (the program name with the path did not match any known pattern to 'wish')
+};
+
 uint trim(char*);
 void deallocateprogram(struct program*);
+enum ptype ppathtype(char*);
 
 #endif 
